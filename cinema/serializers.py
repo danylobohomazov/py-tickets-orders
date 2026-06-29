@@ -96,6 +96,17 @@ class TicketListSerializer(TicketSerializer):
         fields = ("row", "seat", "movie_session")
 
 
+class TicketRetrieveSerializer(TicketSerializer):
+    movie_session = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+    )
+
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat", "movie_session")
+
+
 class MovieSessionDetailSerializer(MovieSessionSerializer):
     movie = MovieListSerializer(many=False, read_only=True)
     cinema_hall = CinemaHallSerializer(many=False, read_only=True)
@@ -131,4 +142,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailSerializer(OrderSerializer):
-    tickets = serializers.PrimaryKeyRelatedField(read_only=True)
+    tickets = TicketRetrieveSerializer(
+        many=True,
+        read_only=False,
+        allow_empty=False
+    )
